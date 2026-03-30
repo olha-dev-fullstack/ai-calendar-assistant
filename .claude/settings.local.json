@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find 'C:/Users/OlhaShevel/OneDrive - SphereMall/Desktop/incode/projects/TEST_PROJECTS/ai-calendar-assistant/app' -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)",
+      "Bash(find 'C:/Users/OlhaShevel/OneDrive - SphereMall/Desktop/incode/projects/TEST_PROJECTS/ai-calendar-assistant' -maxdepth 3 -type f -name *.tsx -o -name *.ts)"
+    ]
+  }
+}
