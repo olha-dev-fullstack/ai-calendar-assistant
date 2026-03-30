@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { convertFileListToFileUIParts, FileUIPart } from "ai";
 import { LoaderCircle, Paperclip, Send, X } from "lucide-react";
+import TaskPanel from "./components/TaskPanel";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -52,7 +53,14 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full max-w-2xl mx-auto justify-end align-items-stretch border border-zinc-200 dark:border-zinc-700 rounded-lg">
+    <div className="flex h-screen w-full max-w-5xl mx-auto border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden">
+      {/* Chat panel */}
+      <div className="flex flex-col flex-1 min-w-0">
+      {/* Chat header */}
+      <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
+        <h2 className="font-semibold text-sm">Chat</h2>
+      </div>
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, msgIndex) => {
@@ -282,6 +290,11 @@ export default function Chat() {
             )}
           </button>
         </form>
+      </div>
+      {/* Task panel */}
+    </div>
+      <div className="w-80 flex-shrink-0">
+        <TaskPanel />
       </div>
     </div>
   );
