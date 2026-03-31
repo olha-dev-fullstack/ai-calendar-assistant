@@ -1,24 +1,54 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { convertFileListToFileUIParts, FileUIPart } from "ai";
-import { LoaderCircle, Paperclip, Send, X } from "lucide-react";
+import { convertFileListToFileUIParts, FileUIPart, DefaultChatTransport } from "ai";
+import { LoaderCircle, Paperclip, Send, X, CheckCircle, ListTodo, Clock, Plus } from "lucide-react";
 import TaskPanel from "./components/TaskPanel";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useTasks } from "./context/TasksContext";
 
 export default function Chat() {
+  const { tasks, addTask, toggleComplete } = useTasks();
   const [input, setInput] = useState("");
   const [files, setFiles] = useState<FileUIPart[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { messages, sendMessage, status, error } = useChat();
+  const tasksRef = useRef(tasks);
+  tasksRef.current = tasks;
+  const processedToolCallIds = useRef(new Set<string>());
+
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({ body: () => ({ tasks: tasksRef.current }) }),
+  });
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, status]);
+
+  useEffect(() => {
+    for (const message of messages) {
+      if (message.role !== "assistant") continue;
+      for (const part of message.parts) {
+        if (!part.type.startsWith("tool-") || part.type === "dynamic-tool") continue;
+        const p = part as { type: string; toolCallId: string; state: string; output?: unknown };
+        if (p.state !== "output-available") continue;
+        if (processedToolCallIds.current.has(p.toolCallId)) continue;
+        processedToolCallIds.current.add(p.toolCallId);
+
+        const toolName = p.type.slice(5); // strip "tool-" prefix
+        const output = p.output as Record<string, unknown>;
+        if (toolName === "addTask") {
+          addTask(output as Parameters<typeof addTask>[0]);
+        } else if (toolName === "completeTask" && output?.success) {
+          toggleComplete(output.id as string);
+        }
+      }
+    }
+  }, [messages, addTask, toggleComplete]);
+
   const isLoading = status === "submitted" || status === "streaming";
 
   async function addFiles(fileList: FileList) {
@@ -168,6 +198,36 @@ export default function Chat() {
                         width={256}
                         height={256}
                       />
+                    );
+                  }
+                  if (part.type.startsWith("tool-") && part.type !== "dynamic-tool") {
+                    const p = part as { type: string; state: string };
+                    const toolName = p.type.slice(5);
+                    const isPending = p.state !== "output-available" && p.state !== "output-error";
+                    const label: Record<string, string> = {
+                      addTask: "Adding task",
+                      completeTask: "Completing task",
+                      getTasks: "Fetching tasks",
+                      getCurrentTime: "Checking time",
+                    };
+                    const icon: Record<string, React.ReactNode> = {
+                      addTask: <Plus size={12} />,
+                      completeTask: <CheckCircle size={12} />,
+                      getTasks: <ListTodo size={12} />,
+                      getCurrentTime: <Clock size={12} />,
+                    };
+                    return (
+                      <div
+                        key={`${message.id}-${i}`}
+                        className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 my-1"
+                      >
+                        {isPending ? (
+                          <LoaderCircle size={12} className="animate-spin" />
+                        ) : (
+                          icon[toolName] ?? <CheckCircle size={12} />
+                        )}
+                        <span>{isPending ? (label[toolName] ?? toolName) : `${label[toolName] ?? toolName} done`}</span>
+                      </div>
                     );
                   }
                   return null;

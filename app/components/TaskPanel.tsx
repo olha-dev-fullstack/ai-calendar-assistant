@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTasks } from "../context/TasksContext";
 import AddTaskForm from "./AddTaskForm";
 import TaskGroup from "./TaskGroup";
@@ -11,8 +11,8 @@ export default function TaskPanel() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
 
-  const pending = tasks.filter((t) => !t.completed);
-  const completed = tasks.filter((t) => t.completed);
+  const pending = useMemo(() => tasks.filter((t) => !t.completed), [tasks]);
+  const completed = useMemo(() => tasks.filter((t) => t.completed), [tasks]);
 
   return (
     <div className="flex flex-col h-full border-l border-zinc-200 dark:border-zinc-700 relative">

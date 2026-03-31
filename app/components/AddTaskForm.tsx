@@ -4,7 +4,6 @@ import { Calendar, Clock, X } from "lucide-react";
 import { useState } from "react";
 import { Priority, useTasks } from "../context/TasksContext";
 import { useAICompletion } from "../hooks/useAICompletion";
-import { set } from "zod";
 
 const EMPTY_FORM = {
   title: "",
@@ -31,7 +30,11 @@ const AddTaskForm = ({
   const [descFocused, setDescFocused] = useState(false);
 
   const titleCompletion = useAICompletion("title", form.title);
-  const descCompletion = useAICompletion("description", form.description, form.title);
+  const descCompletion = useAICompletion(
+    "description",
+    form.description,
+    form.title,
+  );
 
   const todayStr = new Date().toLocaleDateString("en-CA");
   const nowTimeStr = new Date().toTimeString().slice(0, 5);
@@ -68,7 +71,11 @@ const AddTaskForm = ({
       >
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm font-semibold">New task</p>
-          <button type="button" onClick={close} className="text-zinc-400 hover:text-zinc-600 cursor-pointer">
+          <button
+            type="button"
+            onClick={close}
+            className="text-zinc-400 hover:text-zinc-600 cursor-pointer"
+          >
             <X size={14} />
           </button>
         </div>
@@ -81,20 +88,24 @@ const AddTaskForm = ({
             placeholder="Task title *"
             value={form.title ?? ""}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            onFocus={setTitleFocused.bind(null, true)}  
+            onFocus={setTitleFocused.bind(null, true)}
             onBlur={setTitleFocused.bind(null, false)}
             onKeyDown={(e) => {
               if (e.key === "Tab" && titleCompletion.suggestion) {
                 e.preventDefault();
-                titleCompletion.accept((v) => setForm((f) => ({ ...f, title: v })));
+                titleCompletion.accept((v) =>
+                  setForm((f) => ({ ...f, title: v })),
+                );
               } else if (e.key === "Escape") {
                 titleCompletion.dismiss();
               }
             }}
             className="flex-1 min-w-0 text-sm pl-3 py-1.5 bg-transparent outline-none wrap-words"
           />
-            <span className="text-sm text-zinc-300 dark:text-zinc-600 pointer-events-none">
-            {titleFocused && titleCompletion.suggestion  ? " " +titleCompletion.suggestion : "\u00A0"}
+          <span className="text-sm text-zinc-300 dark:text-zinc-600 pointer-events-none">
+            {titleFocused && titleCompletion.suggestion
+              ? " " + titleCompletion.suggestion
+              : "\u00A0"}
           </span>
         </div>
 
@@ -112,7 +123,9 @@ const AddTaskForm = ({
             onKeyDown={(e) => {
               if (e.key === "Tab" && descCompletion.suggestion) {
                 e.preventDefault();
-                descCompletion.accept((v) => setForm((f) => ({ ...f, description: v })));
+                descCompletion.accept((v) =>
+                  setForm((f) => ({ ...f, description: v })),
+                );
               } else if (e.key === "Escape") {
                 descCompletion.dismiss();
               }
@@ -120,13 +133,18 @@ const AddTaskForm = ({
             className="w-full text-sm px-3 pt-1.5 pb-0 bg-transparent outline-none resize-none"
           />
           <span className="text-sm text-zinc-300 dark:text-zinc-600 pointer-events-none">
-            {descFocused && descCompletion.suggestion  ? descCompletion.suggestion : "\u00A0"}
+            {descFocused && descCompletion.suggestion
+              ? descCompletion.suggestion
+              : "\u00A0"}
           </span>
         </div>
 
         <div className="flex gap-2 flex-wrap">
           <div className="relative flex-1">
-            <Calendar size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <Calendar
+              size={14}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            />
             <input
               type="date"
               value={form.date ?? ""}
@@ -134,14 +152,22 @@ const AddTaskForm = ({
               onChange={(e) => {
                 const newDate = e.target.value;
                 const newIsToday = newDate === todayStr;
-                const timeIsInPast = newIsToday && (form.time ?? "") < nowTimeStr;
-                setForm({ ...form, date: newDate, time: timeIsInPast ? "" : (form.time ?? "") });
+                const timeIsInPast =
+                  newIsToday && (form.time ?? "") < nowTimeStr;
+                setForm({
+                  ...form,
+                  date: newDate,
+                  time: timeIsInPast ? "" : (form.time ?? ""),
+                });
               }}
               className={`${INPUT_CLASS} pl-8`}
             />
           </div>
           <div className="relative flex-1">
-            <Clock size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <Clock
+              size={14}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            />
             <input
               type="time"
               value={form.time ?? ""}
@@ -152,7 +178,9 @@ const AddTaskForm = ({
           </div>
           <select
             value={form.priority}
-            onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}
+            onChange={(e) =>
+              setForm({ ...form, priority: e.target.value as Priority })
+            }
             className={INPUT_CLASS}
           >
             <option value="high">High</option>
@@ -171,6 +199,5 @@ const AddTaskForm = ({
     </>
   );
 };
-
 
 export default AddTaskForm;
