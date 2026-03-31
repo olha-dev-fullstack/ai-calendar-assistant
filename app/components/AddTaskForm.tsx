@@ -4,6 +4,7 @@ import { Calendar, Clock, X } from "lucide-react";
 import { useState } from "react";
 import { Priority, useTasks } from "../context/TasksContext";
 import { useAICompletion } from "../hooks/useAICompletion";
+import { set } from "zod";
 
 const EMPTY_FORM = {
   title: "",
@@ -25,6 +26,9 @@ const AddTaskForm = ({
   const { addTask } = useTasks();
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
+
+  const [titleFocused, setTitleFocused] = useState(false);
+  const [descFocused, setDescFocused] = useState(false);
 
   const titleCompletion = useAICompletion("title", form.title);
   const descCompletion = useAICompletion("description", form.description, form.title);
@@ -69,19 +73,16 @@ const AddTaskForm = ({
           </button>
         </div>
 
-        {/* Title with inline ghost text */}
-        <div className="relative rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500">
-          {/* Ghost overlay */}
-          <div className="absolute inset-0 flex items-center px-3 py-1.5 text-sm pointer-events-none overflow-hidden whitespace-pre select-none">
-            <span className="text-transparent">{form.title}</span>
-            <span className="text-zinc-300 dark:text-zinc-500">{titleCompletion.suggestion}</span>
-          </div>
+        {/* Title — input + ghost suggestion in same flex row */}
+        <div className="flex items-center rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500 overflow-hidden">
           <input
             autoFocus
             type="text"
             placeholder="Task title *"
             value={form.title ?? ""}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
+            onFocus={setTitleFocused.bind(null, true)}  
+            onBlur={setTitleFocused.bind(null, false)}
             onKeyDown={(e) => {
               if (e.key === "Tab" && titleCompletion.suggestion) {
                 e.preventDefault();
@@ -90,23 +91,23 @@ const AddTaskForm = ({
                 titleCompletion.dismiss();
               }
             }}
-            className="relative w-full text-sm px-3 py-1.5 bg-transparent outline-none rounded-lg"
+            className="flex-1 min-w-0 text-sm pl-3 py-1.5 bg-transparent outline-none wrap-words"
           />
+            <span className="text-sm text-zinc-300 dark:text-zinc-600 pointer-events-none">
+            {titleFocused && titleCompletion.suggestion  ? " " +titleCompletion.suggestion : "\u00A0"}
+          </span>
         </div>
 
         {error && <p className="text-xs text-red-500">{error}</p>}
 
-        {/* Description with inline ghost text */}
-        <div className="relative rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500">
-          {/* Ghost overlay */}
-          <div className="absolute inset-0 px-3 py-1.5 text-sm pointer-events-none overflow-hidden whitespace-pre-wrap break-words select-none">
-            <span className="text-transparent">{form.description}</span>
-            <span className="text-zinc-300 dark:text-zinc-500">{descCompletion.suggestion}</span>
-          </div>
+        {/* Description — textarea + ghost suggestion continuation */}
+        <div className="rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500">
           <textarea
             placeholder="Description (optional)"
             value={form.description ?? ""}
-            rows={2}
+            rows={5}
+            onFocus={setDescFocused.bind(null, true)}
+            onBlur={setDescFocused.bind(null, false)}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             onKeyDown={(e) => {
               if (e.key === "Tab" && descCompletion.suggestion) {
@@ -116,8 +117,11 @@ const AddTaskForm = ({
                 descCompletion.dismiss();
               }
             }}
-            className="relative w-full text-sm px-3 py-1.5 bg-transparent outline-none rounded-lg resize-none"
+            className="w-full text-sm px-3 pt-1.5 pb-0 bg-transparent outline-none resize-none"
           />
+          <span className="text-sm text-zinc-300 dark:text-zinc-600 pointer-events-none">
+            {descFocused && descCompletion.suggestion  ? descCompletion.suggestion : "\u00A0"}
+          </span>
         </div>
 
         <div className="flex gap-2 flex-wrap">

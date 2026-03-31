@@ -13,22 +13,29 @@ export function useAICompletion(
 
   const { completion, complete, isLoading, stop, setCompletion } = useCompletion({
     api: "/api/completion",
+    streamProtocol: "text",
   });
 
-  useEffect(() => {
-    setCompletion("");
+  const completeRef = useRef(complete);
+  const setCompletionRef = useRef(setCompletion);
 
+  useEffect(() => {
+    completeRef.current = complete;
+    setCompletionRef.current = setCompletion;
+  }, [complete, setCompletion]);
+
+  useEffect(() => {
+    setCompletionRef.current("");
     if (value.trim().length < 3) {
       doneRef.current = false;
       return;
     }
-
     if (doneRef.current) return;
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
     timerRef.current = setTimeout(() => {
-      complete(value, { body: { field, title } });
+      completeRef.current(value, { body: { field, title } });
     }, 500);
 
     return () => {

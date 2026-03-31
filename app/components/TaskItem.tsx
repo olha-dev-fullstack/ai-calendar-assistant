@@ -58,7 +58,7 @@ export const TaskItem = ({
           {task.date && (
             <span className="flex items-center gap-1 text-xs text-zinc-400">
               <Calendar size={10} />
-              {new Date(task.date + "T00:00:00").toLocaleDateString(undefined, {
+              {new Date(task.date + "T00:00:00").toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",

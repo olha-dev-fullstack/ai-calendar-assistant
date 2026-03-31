@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export type Priority = "low" | "medium" | "high";
 
@@ -28,15 +28,13 @@ const STORAGE_KEY = "ai-planner-tasks";
 
 export function TasksProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(() => {
-    // Load once from localStorage during initial render (client only)
-    if (typeof window === "undefined") return [];
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as Task[]) : [];
+      if (raw) return JSON.parse(raw) as Task[];
     } catch {
       // corrupted storage — start fresh
-      return [];
     }
+    return [];
   });
 
   function persist(next: Task[]) {
