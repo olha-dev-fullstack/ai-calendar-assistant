@@ -1,6 +1,10 @@
 import { streamText } from "ai";
+import { getIp, rateLimit, tooManyRequests } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
+  const { success, retryAfterMs } = rateLimit(getIp(req), 60, 60_000);
+  if (!success) return tooManyRequests(retryAfterMs);
+
   const { prompt, field, title } = (await req.json()) as {
     prompt: string; // the value the user has typed so far (sent by useCompletion)
     field: "title" | "description";

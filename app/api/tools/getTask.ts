@@ -1,8 +1,8 @@
 import { tool } from "ai";
-import type { Task } from "../../context/TasksContext";
 import { GetTasksSchema } from "./schema";
+import { Task } from "@/app/types";
 
-export function makeGetTasksTool(tasks: Task[]) {
+export function getTasksTool(tasks: Task[]) {
   return tool({
     description: "Retrieve the user's tasks, optionally filtered by status",
     inputSchema: GetTasksSchema,

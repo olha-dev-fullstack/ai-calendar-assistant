@@ -2,8 +2,9 @@
 
 import { Calendar, Clock, X } from "lucide-react";
 import { useState } from "react";
-import { Priority, useTasks } from "../context/TasksContext";
+import { useTasks } from "../context/TasksContext";
 import { useAICompletion } from "../hooks/useAICompletion";
+import { Priority } from "../types";
 
 const EMPTY_FORM = {
   title: "",

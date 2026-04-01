@@ -1,11 +1,19 @@
 import { streamText, UIMessage, convertToModelMessages, stepCountIs } from "ai";
-import type { Task } from "../../context/TasksContext";
-import { addTaskTool } from "../tools/addTask";
-import { makeCompleteTaskTool } from "../tools/completeTask";
-import { makeGetTasksTool } from "../tools/getTask";
-import { getCurrentTimeTool } from "../tools/getCurrentTime";
+import {
+  addTaskTool,
+  completeTaskTool,
+  deleteTaskTool,
+  editTaskTool,
+  getCurrentTimeTool,
+  getTasksTool,
+} from "../tools";
+import { Task } from "@/app/types";
+import { getIp, rateLimit, tooManyRequests } from "@/app/lib/rateLimit";
 
 export async function POST(req: Request) {
+  const { success, retryAfterMs } = rateLimit(getIp(req), 20, 60_000);
+  if (!success) return tooManyRequests(retryAfterMs);
+
   const { messages, tasks = [] }: { messages: UIMessage[]; tasks: Task[] } =
     await req.json();
 
@@ -17,8 +25,10 @@ export async function POST(req: Request) {
     stopWhen: stepCountIs(5),
     tools: {
       addTask: addTaskTool,
-      completeTask: makeCompleteTaskTool(tasks),
-      getTasks: makeGetTasksTool(tasks),
+      completeTask: completeTaskTool(tasks),
+      deleteTask: deleteTaskTool(tasks),
+      editTask: editTaskTool(tasks),
+      getTasks: getTasksTool(tasks),
       getCurrentTime: getCurrentTimeTool,
     },
   });

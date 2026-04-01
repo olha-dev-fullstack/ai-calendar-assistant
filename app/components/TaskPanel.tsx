@@ -4,12 +4,12 @@ import { Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTasks } from "../context/TasksContext";
 import AddTaskForm from "./AddTaskForm";
+import { AnalysisSection } from "./AnalysisSection";
 import TaskGroup from "./TaskGroup";
 
 export default function TaskPanel() {
   const { tasks, toggleComplete, deleteTask } = useTasks();
   const [showForm, setShowForm] = useState(false);
-  const [error, setError] = useState("");
 
   const pending = useMemo(() => tasks.filter((t) => !t.completed), [tasks]);
   const completed = useMemo(() => tasks.filter((t) => t.completed), [tasks]);
@@ -29,7 +29,6 @@ export default function TaskPanel() {
         <button
           onClick={() => {
             setShowForm((v) => !v);
-            setError("");
           }}
           className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 font-medium transition-colors cursor-pointer"
         >
@@ -70,6 +69,7 @@ export default function TaskPanel() {
           </div>
         )}
       </div>
+      <AnalysisSection />
     </div>
   );
 }

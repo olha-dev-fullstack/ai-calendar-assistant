@@ -1,11 +1,11 @@
 import { tool } from "ai";
-import { CompleteTaskSchema } from "./schema";
 import { Task } from "@/app/types";
+import { DeleteTaskSchema } from "./schema";
 
-export function completeTaskTool(tasks: Task[]) {
+export function deleteTaskTool(tasks: Task[]) {
   return tool({
-    description: "Mark a task as completed by its ID or title",
-    inputSchema: CompleteTaskSchema,
+    description: "Delete a task from the user's planner by its ID or title",
+    inputSchema: DeleteTaskSchema,
     execute: async ({ id, title }) => {
       const task =
         tasks.find((t) => (id ? t.id === id : false)) ??
@@ -17,12 +17,6 @@ export function completeTaskTool(tasks: Task[]) {
         );
 
       if (!task) return { success: false, message: "Task not found" };
-      if (task.completed)
-        return {
-          success: false,
-          message: `"${task.title}" is already completed`,
-        };
-
       return { success: true, id: task.id, title: task.title };
     },
   });

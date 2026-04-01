@@ -1,35 +1,26 @@
 "use client";
 
-import { createContext, useContext, useSyncExternalStore } from "react";
+import { createContext, useContext, useState, useSyncExternalStore } from "react";
+import { TaskAnalysis } from "../api/tools/schema";
+import { Task } from "../types";
 
-export type Priority = "low" | "medium" | "high";
-
-export type Task = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  priority: Priority;
-  completed: boolean;
-  createdAt: number;
-};
 
 type TasksContextValue = {
   tasks: Task[];
   addTask: (fields: Omit<Task, "id" | "completed" | "createdAt">) => void;
   toggleComplete: (id: string) => void;
+  editTask: (id: string, updates: Partial<Omit<Task, "id" | "completed" | "createdAt">>) => void;
   deleteTask: (id: string) => void;
+  analysis: TaskAnalysis | null;
+  isAnalyzing: boolean;
+  analyzeError: string;
+  analyze: () => Promise<void>;
+  clearAnalysis: () => void;
 };
 
 const TasksContext = createContext<TasksContextValue | null>(null);
 
 const STORAGE_KEY = "ai-planner-tasks";
-
-// ─── Module-level store ───────────────────────────────────────────────────────
-// Populated from localStorage once on the client at module load time.
-// useSyncExternalStore reads from here; getServerSnapshot returns [] during SSR
-// and initial hydration so the server HTML is always matched.
 
 let currentTasks: Task[] = [];
 const listeners = new Set<() => void>();
@@ -66,10 +57,11 @@ function persistTasks(next: Task[]) {
   listeners.forEach((l) => l());
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 export function TasksProvider({ children }: { children: React.ReactNode }) {
   const tasks = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [analysis, setAnalysis] = useState<TaskAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState("");
 
   function addTask(fields: Omit<Task, "id" | "completed" | "createdAt">) {
     persistTasks([
@@ -82,12 +74,40 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     persistTasks(currentTasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
   }
 
+  function editTask(id: string, updates: Partial<Omit<Task, "id" | "completed" | "createdAt">>) {
+    persistTasks(currentTasks.map((t) => (t.id === id ? { ...t, ...updates } : t)));
+  }
+
   function deleteTask(id: string) {
     persistTasks(currentTasks.filter((t) => t.id !== id));
   }
 
+  function clearAnalysis() {
+    setAnalysis(null);
+    setAnalyzeError("");
+  }
+
+  async function analyze() {
+    setIsAnalyzing(true);
+    setAnalyzeError("");
+    setAnalysis(null);
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tasks: currentTasks }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setAnalysis(await res.json());
+    } catch {
+      setAnalyzeError("Analysis failed. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }
+
   return (
-    <TasksContext.Provider value={{ tasks, addTask, toggleComplete, deleteTask }}>
+    <TasksContext.Provider value={{ tasks, addTask, toggleComplete, editTask, deleteTask, analysis, isAnalyzing, analyzeError, analyze, clearAnalysis }}>
       {children}
     </TasksContext.Provider>
   );
