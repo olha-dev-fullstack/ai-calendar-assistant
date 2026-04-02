@@ -42,7 +42,7 @@ export default function Chat() {
     return new DefaultChatTransport({
       body: () => ({ tasks: tasksRef.current }),
     });
-  }, [tasksRef, tasks]);
+  }, [tasksRef]);
 
   const { messages, sendMessage, status, error } = useChat({ transport });
 
@@ -56,7 +56,7 @@ export default function Chat() {
 
   useEffect(() => {
     tasksRef.current = tasks;
-  }, [tasks.length]);
+  }, [tasks.length, toggleComplete, deleteTask, editTask]);
 
   useEffect(() => {
     for (const message of messages) {
