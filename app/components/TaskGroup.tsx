@@ -1,4 +1,4 @@
-import { Task } from "../context/TasksContext";
+import { Task } from "../types";
 import { TaskItem } from "./TaskItem";
 
 function TaskGroup({
