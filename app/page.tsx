@@ -52,7 +52,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (isAnalyzing) setAnalysisAnchorIndex(messages.length);
-  }, [isAnalyzing]);
+  }, [isAnalyzing, messages.length]);
 
   useEffect(() => {
     tasksRef.current = tasks;
@@ -126,20 +126,26 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex h-screen w-full max-w-5xl mx-auto border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden">
+    <div className="flex h-screen w-full max-w-5xl mx-auto border border-periwinkle dark:border-zinc-700 rounded-lg overflow-hidden">
       {/* Chat panel */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* Chat header */}
-        <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
+        <div className="px-4 py-3 border-b border-periwinkle dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80">
           <h2 className="font-semibold text-sm">Chat</h2>
         </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Analysis bubble when triggered with no messages — anchored before all messages */}
+          {(analysis || isAnalyzing) && analysisAnchorIndex === 0 && (
+            <AnalysisBubble analysis={analysis} isAnalyzing={isAnalyzing} />
+          )}
+
           {messages.map((message, msgIndex) => {
             const showAnalysisAfter =
               (analysis || isAnalyzing) &&
               analysisAnchorIndex !== null &&
+              analysisAnchorIndex > 0 &&
               msgIndex + 1 === analysisAnchorIndex;
             const isLastMessage = msgIndex === messages.length - 1;
             const isStreamingThisMessage =
@@ -158,8 +164,8 @@ export default function Chat() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 whitespace-pre-wrap ${
                     message.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                      ? "bg-blush-pop text-zinc-900 dark:bg-amethyst-smoke dark:text-white"
+                      : "bg-lavender-blush dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                   }`}
                 >
                   {message.parts.map((part, i) => {
@@ -251,11 +257,6 @@ export default function Chat() {
             );
           })}
 
-          {/* Analysis bubble when triggered with no messages */}
-          {(analysis || isAnalyzing) && analysisAnchorIndex === 0 && (
-            <AnalysisBubble analysis={analysis} isAnalyzing={isAnalyzing} />
-          )}
-
           {/* Typing indicator — shown while waiting for first token */}
           {status === "submitted" && <TypingIndicator />}
 
@@ -263,7 +264,7 @@ export default function Chat() {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-zinc-200 dark:border-zinc-700 p-4 space-y-2">
+        <div className="border-t border-periwinkle dark:border-zinc-700 p-4 space-y-2 bg-white/80 dark:bg-zinc-900/80">
           {error && (
             <p className="text-red-500 text-sm px-1">{error.message}</p>
           )}
@@ -274,7 +275,7 @@ export default function Chat() {
               {files.map((file, i) => (
                 <div
                   key={i}
-                  className="relative h-16 w-16 rounded overflow-hidden border border-zinc-200 dark:border-zinc-700"
+                  className="relative h-16 w-16 rounded overflow-hidden border border-periwinkle dark:border-zinc-700"
                 >
                   <Image
                     src={file.url}
@@ -286,7 +287,7 @@ export default function Chat() {
                   <button
                     type="button"
                     onClick={() => removeFile(i)}
-                    className="absolute top-0 right-0 bg-black/60 text-white text-xs leading-none p-0.5 rounded-bl cursor-pointer hover:bg-black/80"
+                    className="absolute top-0 right-0 bg-black/80 text-white text-xs leading-none p-0.5 rounded-bl cursor-pointer hover:bg-black/80"
                   >
                     <X />
                   </button>
@@ -301,7 +302,7 @@ export default function Chat() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
-              className="flex-shrink-0 p-2 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition-colors"
+              className="flex-shrink-0 p-2 text-amethyst-smoke hover:text-amethyst-smoke-dark dark:hover:text-periwinkle disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition-colors"
               title="Attach image"
             >
               <Paperclip />
@@ -318,7 +319,7 @@ export default function Chat() {
 
             {/* Textarea */}
             <textarea
-              className="flex-1 min-h-[80px] resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="flex-1 min-h-[80px] resize-none rounded-xl border border-periwinkle dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amethyst-smoke disabled:opacity-50"
               value={input}
               placeholder="Ask me to help organize your day..."
               disabled={isLoading}
@@ -337,7 +338,7 @@ export default function Chat() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && files.length === 0)}
-              className="flex-shrink-0 rounded-full bg-blue-500 p-2.5 text-white hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex-shrink-0 rounded-full bg-amethyst-smoke p-2.5 text-white hover:bg-amethyst-smoke-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="Send message"
             >
               {isLoading ? (

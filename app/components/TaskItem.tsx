@@ -5,7 +5,7 @@ const PRIORITY_STYLES: Record<Priority, string> = {
   high: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   medium:
     "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  low: "bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400",
+  low: "bg-pink-orchid/40 text-amethyst-smoke-dark dark:bg-zinc-700 dark:text-zinc-400",
 };
 
 const PRIORITY_LABELS: Record<Priority, string> = {
@@ -24,14 +24,14 @@ export const TaskItem = ({
   onDelete: (id: string) => void;
 }) => {
   return (
-    <li className="flex items-start gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3">
+    <li className="flex items-start gap-2 rounded-xl border border-periwinkle dark:border-zinc-700 bg-white/80 dark:bg-zinc-900 p-3">
       {/* Checkbox */}
       <button
         onClick={() => onToggle(task.id)}
         className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded border transition-colors cursor-pointer ${
           task.completed
-            ? "bg-blue-500 border-blue-500 text-white"
-            : "border-zinc-300 dark:border-zinc-600 hover:border-blue-400"
+            ? "bg-amethyst-smoke border-[#9c89b8] text-white"
+            : "border-periwinkle dark:border-zinc-600 hover:border-amethyst-smoke"
         }`}
       >
         {task.completed && <Check size={14} strokeWidth={3} />}

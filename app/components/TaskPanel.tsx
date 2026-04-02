@@ -15,13 +15,13 @@ export default function TaskPanel() {
   const completed = useMemo(() => tasks.filter((t) => t.completed), [tasks]);
 
   return (
-    <div className="flex flex-col h-full border-l border-zinc-200 dark:border-zinc-700 relative">
+    <div className="flex flex-col h-full border-l border-periwinkle dark:border-zinc-700 relative bg-white/40 dark:bg-zinc-900/40">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-periwinkle dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-sm">Tasks</h2>
           {pending.length > 0 && (
-            <span className="text-xs bg-blue-500 text-white rounded-full px-1.5 py-0.5 leading-none">
+            <span className="text-xs bg-amethyst-smoke text-white rounded-full px-1.5 py-0.5 leading-none">
               {pending.length}
             </span>
           )}
@@ -30,7 +30,7 @@ export default function TaskPanel() {
           onClick={() => {
             setShowForm((v) => !v);
           }}
-          className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 font-medium transition-colors cursor-pointer"
+          className="flex items-center gap-1 text-xs text-amethyst-smoke hover:text-amethyst-smoke-dark font-medium transition-colors cursor-pointer"
         >
           {showForm ? <X size={14} /> : <Plus size={14} />}
           {showForm ? "Cancel" : "Add task"}

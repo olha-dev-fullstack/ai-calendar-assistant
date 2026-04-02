@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0e6ef;
+  --foreground: #2d2438;
+
+  --amethyst-smoke: #9c89b8;
+  --amethyst-smoke-dark: #7a6a9a;
+  --blush-pop: #f0a6ca;
+  --pink-orchid: #efc3e6;
+  --lavender-blush: #f0e6ef;
+  --periwinkle: #b8bedd;
 }
 
 @theme inline {
@@ -10,34 +17,51 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-amethyst-smoke: var(--amethyst-smoke);
+  --color-amethyst-smoke-dark: var(--amethyst-smoke-dark);
+  --color-blush-pop: var(--blush-pop);
+  --color-pink-orchid: var(--pink-orchid);
+  --color-lavender-blush: var(--lavender-blush);
+  --color-periwinkle: var(--periwinkle);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #1a1225;
     --foreground: #ededed;
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--background) url("/bg.png") center / cover no-repeat fixed;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 @keyframes dot-bounce {
-  0%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-5px); }
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
-
 .streaming-cursor::after {
-  content: '|';
+  content: "|";
   display: inline-block;
   margin-left: 1px;
   animation: cursor-blink 0.8s infinite;

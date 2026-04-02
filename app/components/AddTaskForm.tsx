@@ -15,7 +15,7 @@ const EMPTY_FORM = {
 };
 
 const INPUT_CLASS =
-  "w-full text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg px-3 py-1.5 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full text-sm border border-periwinkle dark:border-zinc-600 rounded-lg px-3 py-1.5 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-amethyst-smoke";
 
 const AddTaskForm = ({
   setShowForm,
@@ -68,7 +68,7 @@ const AddTaskForm = ({
       <form
         onSubmit={handleAdd}
         onClick={(e) => e.stopPropagation()}
-        className="absolute top-12 left-3 right-3 z-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl p-4 space-y-2"
+        className="absolute top-12 left-3 right-3 z-20 bg-white dark:bg-zinc-900 border border-periwinkle dark:border-zinc-700 rounded-xl shadow-xl p-4 space-y-2"
       >
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm font-semibold">New task</p>
@@ -82,7 +82,7 @@ const AddTaskForm = ({
         </div>
 
         {/* Title — input + ghost suggestion in same flex row */}
-        <div className="flex items-center rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500 overflow-hidden">
+        <div className="flex items-center rounded-lg border border-periwinkle dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-amethyst-smoke overflow-hidden">
           <input
             autoFocus
             type="text"
@@ -113,7 +113,7 @@ const AddTaskForm = ({
         {error && <p className="text-xs text-red-500">{error}</p>}
 
         {/* Description — textarea + ghost suggestion continuation */}
-        <div className="rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-blue-500">
+        <div className="rounded-lg border border-periwinkle dark:border-zinc-600 bg-white dark:bg-zinc-800 focus-within:ring-2 focus-within:ring-amethyst-smoke">
           <textarea
             placeholder="Description (optional)"
             value={form.description ?? ""}
@@ -192,7 +192,7 @@ const AddTaskForm = ({
 
         <button
           type="submit"
-          className="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-1.5 font-medium transition-colors cursor-pointer"
+          className="w-full text-sm bg-amethyst-smoke hover:bg-amethyst-smoke-dark text-white rounded-lg py-1.5 font-medium transition-colors cursor-pointer"
         >
           Add task
         </button>

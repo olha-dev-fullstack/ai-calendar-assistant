@@ -11,7 +11,7 @@ export const AnalysisBubble = ({
   return (
     <div className="flex flex-col gap-1 items-start">
       <span className="text-xs text-zinc-400 px-1">AI</span>
-      <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 space-y-3 text-sm">
+      <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-lavender-blush dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 space-y-3 text-sm">
         {isAnalyzing ? (
           <span className="flex items-center gap-2 text-zinc-400 text-xs">
             <LoaderCircle size={13} className="animate-spin" /> Analyzing tasks…
@@ -21,8 +21,8 @@ export const AnalysisBubble = ({
             <p className="text-zinc-500 dark:text-zinc-400 text-xs italic">
               {analysis.overallAssessment}
             </p>
-            <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-2.5 space-y-1">
-              <p className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1 text-xs">
+            <div className="rounded-lg bg-pink-orchid/40 dark:bg-amethyst-smoke/20 border border-blush-pop dark:border-amethyst-smoke/40 p-2.5 space-y-1">
+              <p className="font-semibold text-amethyst-smoke-dark dark:text-periwinkle flex items-center gap-1 text-xs">
                 <Sparkles size={11} /> Top priority
               </p>
               <p className="text-xs text-zinc-700 dark:text-zinc-300">
