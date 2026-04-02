@@ -1,5 +1,5 @@
 import { Calendar, Check, Clock, Trash2 } from "lucide-react";
-import { Priority, Task } from "../context/TasksContext";
+import { Priority, Task } from "../types";
 
 const PRIORITY_STYLES: Record<Priority, string> = {
   high: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
